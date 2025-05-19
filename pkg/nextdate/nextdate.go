@@ -7,7 +7,11 @@ import (
 	"time"
 )
 
-const DateFormat = "20060102"
+const (
+	DateFormatYMD     = "20060102"   // 20060102
+	DateFormatDMYDot  = "02.01.2006" // 02.01.2006
+	DateFormatYMDDash = "2006-01-02" // 2006-01-02
+)
 
 // Проверка переданной даты относительно текущей
 func afterNow(date, now time.Time) bool {
@@ -27,7 +31,7 @@ func weekdayToISO(w time.Weekday) int {
 // Возвращает следующую дату выполнения или ошибку
 func NextDate(now time.Time, dstart string, repeat string) (string, error) {
 	// Преобразует строку dstart в time.Time
-	dateNow, err := time.Parse(DateFormat, dstart)
+	dateNow, err := time.Parse(DateFormatYMD, dstart)
 	if err != nil {
 		return "", fmt.Errorf("ошибка преобразования даты: %w", err)
 	}
@@ -48,7 +52,7 @@ func NextDate(now time.Time, dstart string, repeat string) (string, error) {
 
 			// если дата равна или больше текущей, выходим
 			if dateNow.Year() >= now.Year() {
-				return dateNow.Format(DateFormat), nil
+				return dateNow.Format(DateFormatYMD), nil
 			}
 		}
 
@@ -73,7 +77,7 @@ func NextDate(now time.Time, dstart string, repeat string) (string, error) {
 				break
 			}
 		}
-		return dateNow.Format(DateFormat), nil
+		return dateNow.Format(DateFormatYMD), nil
 
 	case "w": // Ищет ближайший день недели из списка, который будет после текущей даты
 		if len(repeatSplit) < 2 {
@@ -96,7 +100,7 @@ func NextDate(now time.Time, dstart string, repeat string) (string, error) {
 				currentDay := weekdayToISO(dateNow.Weekday())
 				for _, d := range days {
 					if d == currentDay {
-						return dateNow.Format(DateFormat), nil
+						return dateNow.Format(DateFormatYMD), nil
 					}
 				}
 			}
@@ -163,7 +167,7 @@ func NextDate(now time.Time, dstart string, repeat string) (string, error) {
 						targetDay = lastDayOfMonth + d + 1
 					}
 					if targetDay == currentDay {
-						return dateNow.Format(DateFormat), nil
+						return dateNow.Format(DateFormatYMD), nil
 					}
 				}
 			}

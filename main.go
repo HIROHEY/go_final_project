@@ -6,8 +6,8 @@ import (
 
 	"github.com/HIROHEY/go_final_project/pkg/api"
 	"github.com/HIROHEY/go_final_project/pkg/db"
-	"github.com/HIROHEY/go_final_project/pkg/serverAndConfing/confing"
-	"github.com/HIROHEY/go_final_project/pkg/serverAndConfing/server"
+	"github.com/HIROHEY/go_final_project/pkg/serverAndConfig/config"
+	"github.com/HIROHEY/go_final_project/pkg/serverAndConfig/server"
 )
 
 func main() {
@@ -23,12 +23,10 @@ func main() {
 		log.Fatalf("Ошибка инициализации базы %v", err)
 	}
 
-	port := confing.GetPort()
+	port := config.GetPort()
 	if err := server.SetupAndRun(port); err != nil {
 		log.Fatalf("Ошибка подключения сервера: %v", err)
 	}
-
-	err = server.SetupAndRun(port)
 
 	if err != nil {
 		log.Fatal(err)
