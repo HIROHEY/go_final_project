@@ -60,5 +60,12 @@ func tasksHandler(w http.ResponseWriter, r *http.Request) {
 		tasks = []*db.Task{}
 	}
 
-	writeJson(w, map[string][]*db.Task{"tasks": tasks}, http.StatusOK)
+	// Формируем ответ с ключом "tasks"
+	response := struct {
+		Tasks []*db.Task `json:"tasks"`
+	}{
+		Tasks: tasks,
+	}
+
+	writeJson(w, response, http.StatusOK) // Один вызов writeJson
 }

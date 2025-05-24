@@ -104,3 +104,72 @@ func queryTasks(query string, args ...any) ([]*Task, error) {
 
 	return tasks, nil
 }
+
+func GetTask(id string) (*Task, error) {
+	query := `
+        SELECT id, date, title, comment, repeat 
+        FROM scheduler 
+        WHERE id = ?
+    `
+	var task Task
+	err := db.QueryRow(query, id).Scan(
+		&task.ID,
+		&task.Date,
+		&task.Title,
+		&task.Comment,
+		&task.Repeat,
+	)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("задача не найдена")
+		}
+		return nil, fmt.Errorf("ошибка запроса: %v", err)
+	}
+	return &task, nil
+}
+
+// Обновление задачи
+func UpdateTask(task *Task) error {
+	query := `
+        UPDATE scheduler 
+        SET date = ?, title = ?, comment = ?, repeat = ? 
+        WHERE id = ?
+    `
+	res, err := db.Exec(
+		query,
+		task.Date,
+		task.Title,
+		task.Comment,
+		task.Repeat,
+		task.ID,
+	)
+	if err != nil {
+		return fmt.Errorf("ошибка обновления: %v", err)
+	}
+
+	rowsAffected, _ := res.RowsAffected()
+	if rowsAffected == 0 {
+		return fmt.Errorf("задача с id %s не существует", task.ID)
+	}
+	return nil
+}
+
+// DeleteTask удаляет задачу по ID
+func DeleteTask(id string) error {
+	query := "DELETE FROM scheduler WHERE id = ?"
+	_, err := db.Exec(query, id)
+	if err != nil {
+		return fmt.Errorf("ошибка удаления: %v", err)
+	}
+	return nil
+}
+
+// UpdateTaskDate обновляет дату выполнения задачи
+func UpdateTaskDate(id, date string) error {
+	query := "UPDATE scheduler SET date = ? WHERE id = ?"
+	_, err := db.Exec(query, date, id)
+	if err != nil {
+		return fmt.Errorf("ошибка обновления: %v", err)
+	}
+	return nil
+}
