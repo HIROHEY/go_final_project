@@ -55,6 +55,5 @@ func nextDayHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("Cледующая дата: %s", nextDate)
 	fmt.Fprintf(w, "%s", nextDate)
 }

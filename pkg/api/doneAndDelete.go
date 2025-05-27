@@ -10,6 +10,10 @@ import (
 
 // doneTaskHandler обрабатывает POST-запрос для завершения задачи
 func doneTaskHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		writeJson(w, map[string]string{"error": "Неправильный запрос"}, http.StatusMethodNotAllowed)
+		return
+	}
 	// Извлечение параметра id
 	id := r.URL.Query().Get("id")
 	if id == "" {
@@ -52,6 +56,11 @@ func doneTaskHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteTaskHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		writeJson(w, map[string]string{"error": "Неправильный запрос"}, http.StatusMethodNotAllowed)
+		return
+	}
+
 	id := r.URL.Query().Get("id")
 	if id == "" {
 		writeJson(w, map[string]string{"error": "параметр id обязателен"}, http.StatusBadRequest)

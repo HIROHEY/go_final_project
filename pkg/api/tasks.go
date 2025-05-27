@@ -2,12 +2,15 @@ package api
 
 import (
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/HIROHEY/go_final_project/pkg/db"
 	"github.com/HIROHEY/go_final_project/pkg/nextdate"
+)
+
+const (
+	limit = 10
 )
 
 func tasksHandler(w http.ResponseWriter, r *http.Request) {
@@ -19,18 +22,6 @@ func tasksHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Получение параметров
 	search := strings.TrimSpace(r.URL.Query().Get("search"))
-	limitStr := r.URL.Query().Get("limit")
-	limit := 10
-
-	// Валидация limit
-	if limitStr != "" {
-		var err error
-		limit, err = strconv.Atoi(limitStr)
-		if err != nil || limit < 1 {
-			writeJson(w, map[string]string{"error": "Некорректный параметр limit"}, http.StatusBadRequest)
-			return
-		}
-	}
 
 	var tasks []*db.Task
 	var err error

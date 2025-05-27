@@ -2,13 +2,34 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/HIROHEY/go_final_project/pkg/api"
 	"github.com/HIROHEY/go_final_project/pkg/db"
-	"github.com/HIROHEY/go_final_project/pkg/serverAndConfig/config"
-	"github.com/HIROHEY/go_final_project/pkg/serverAndConfig/server"
 )
+
+const (
+	// DefaultPort - порт по умолчанию
+	DefaultPort = "7540"
+	// WebDir - директория с фронтендом
+	WebDir = "./web"
+)
+
+// GetPort возвращает порт из переменной окружения или значение по умолчанию
+func GetPort() string {
+	if port := os.Getenv("TODO_PORT"); port != "" {
+		return port
+	}
+	return DefaultPort
+}
+
+// SetupAndRun настраивает и запускает сервер
+func SetupAndRun(port string) error {
+	http.Handle("/", http.FileServer(http.Dir(WebDir)))
+	return http.ListenAndServe(":"+port, nil)
+
+}
 
 func main() {
 	api.Init()
@@ -22,14 +43,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("Ошибка инициализации базы %v", err)
 	}
+	defer db.Close()
 
-	port := config.GetPort()
-	if err := server.SetupAndRun(port); err != nil {
+	port := GetPort()
+	if err := SetupAndRun(port); err != nil {
 		log.Fatalf("Ошибка подключения сервера: %v", err)
-	}
-
-	if err != nil {
-		log.Fatal(err)
 	}
 
 }

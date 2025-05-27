@@ -173,3 +173,10 @@ func UpdateTaskDate(id, date string) error {
 	}
 	return nil
 }
+
+func Close() error {
+	if db != nil {
+		return db.Close()
+	}
+	return nil
+}
